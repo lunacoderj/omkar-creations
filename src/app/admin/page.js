@@ -14,6 +14,8 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [dashboardData, setDashboardData] = useState(null);
   const [editingReel, setEditingReel] = useState(null);
+  const [isAddingReel, setIsAddingReel] = useState(false);
+  const [newReel, setNewReel] = useState({});
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -50,6 +52,40 @@ export default function AdminDashboard() {
           reels: prev.reels.map(r => r.id === editingReel.id ? { ...r, ...editingReel } : r)
         }));
         setEditingReel(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setIsSaving(false);
+  };
+
+  const handleAddReel = () => {
+    setNewReel({
+      title: "",
+      category: "",
+      project_file_url: "",
+      is_visible: true,
+      is_featured: false,
+    });
+    setIsAddingReel(true);
+  };
+
+  const handleSaveNewReel = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch(`/api/reels`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newReel),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDashboardData(prev => ({
+          ...prev,
+          reels: [{ id: data.id, ...newReel }, ...prev.reels],
+          stats: { ...prev.stats, totalReels: prev.stats.totalReels + 1 }
+        }));
+        setIsAddingReel(false);
       }
     } catch (err) {
       console.error(err);
@@ -188,7 +224,7 @@ export default function AdminDashboard() {
           <div className={styles.fadeIn}>
             <div className={styles.reelsHeader}>
               <h2 className={styles.reelsTitle}>All Reels</h2>
-              <button className={styles.addReelButton}>+ Add Reel</button>
+              <button className={styles.addReelButton} onClick={handleAddReel}>+ Add Reel</button>
             </div>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
@@ -264,6 +300,68 @@ export default function AdminDashboard() {
                     <button className={styles.modalCancel} onClick={() => setEditingReel(null)}>Cancel</button>
                     <button className={styles.modalSave} onClick={handleSaveReel} disabled={isSaving}>
                       {isSaving ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Add Modal */}
+            {isAddingReel && (
+              <div className={styles.modalOverlay}>
+                <div className={styles.modalContent}>
+                  <h3 className={styles.modalTitle}>Add New Reel</h3>
+                  <div className={styles.modalForm}>
+                    <div className={styles.formGroup}>
+                      <label>Title</label>
+                      <input 
+                        type="text" 
+                        value={newReel.title || ""} 
+                        onChange={(e) => setNewReel({...newReel, title: e.target.value})} 
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Category</label>
+                      <input 
+                        type="text" 
+                        value={newReel.category || ""} 
+                        onChange={(e) => setNewReel({...newReel, category: e.target.value})} 
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Project File URL</label>
+                      <input 
+                        type="text" 
+                        placeholder="https://link-to-project-file"
+                        value={newReel.project_file_url || ""} 
+                        onChange={(e) => setNewReel({...newReel, project_file_url: e.target.value})} 
+                      />
+                    </div>
+                    <div className={styles.formGroupCheck}>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={newReel.is_visible !== false} 
+                          onChange={(e) => setNewReel({...newReel, is_visible: e.target.checked})} 
+                        />
+                        {" Visible to Public"}
+                      </label>
+                    </div>
+                    <div className={styles.formGroupCheck}>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={newReel.is_featured === true} 
+                          onChange={(e) => setNewReel({...newReel, is_featured: e.target.checked})} 
+                        />
+                        {" Featured Reel"}
+                      </label>
+                    </div>
+                  </div>
+                  <div className={styles.modalActions}>
+                    <button className={styles.modalCancel} onClick={() => setIsAddingReel(false)}>Cancel</button>
+                    <button className={styles.modalSave} onClick={handleSaveNewReel} disabled={isSaving}>
+                      {isSaving ? "Adding..." : "Add Reel"}
                     </button>
                   </div>
                 </div>

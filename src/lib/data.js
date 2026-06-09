@@ -313,3 +313,35 @@ export async function deleteReel(id) {
   }
   return { success: true };
 }
+
+export async function createReel(reelData) {
+  try {
+    if (adminDb) {
+      const docRef = await adminDb.collection("posts").add({
+        ...reelData,
+        created_at: new Date().toISOString(),
+        view_count: reelData.view_count || 0,
+        download_count: reelData.download_count || 0,
+        is_visible: reelData.is_visible !== false,
+        is_featured: reelData.is_featured || false,
+      });
+      return { success: true, id: docRef.id };
+    }
+  } catch (e) {
+    console.error("Failed to create reel:", e.message);
+    return { success: false, error: e.message };
+  }
+  // Mock fallback
+  const newReel = {
+    id: String(Date.now()),
+    ...reelData,
+    created_at: new Date().toISOString(),
+    view_count: reelData.view_count || 0,
+    download_count: reelData.download_count || 0,
+    is_visible: reelData.is_visible !== false,
+    is_featured: reelData.is_featured || false,
+  };
+  MOCK_REELS.unshift(newReel);
+  return { success: true, id: newReel.id };
+}
+
