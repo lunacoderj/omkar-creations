@@ -113,22 +113,34 @@ export default function ReelDetail() {
             {/* Meta */}
             <ScrollReveal delay={300}>
               <div className={styles.metaRow}>
-                {reel.views > 0 && (
+                {reel.views != null && (
                   <div>
                     <p className={styles.metaLabel}>Views</p>
-                    <p className={styles.metaValue}>{reel.views?.toLocaleString()}</p>
+                    <p className={styles.metaValue}>{reel.views}</p>
                   </div>
                 )}
-                {reel.likes > 0 && (
+                {reel.likes != null && (
                   <div>
                     <p className={styles.metaLabel}>Likes</p>
-                    <p className={styles.metaValue}>{reel.likes?.toLocaleString()}</p>
+                    <p className={styles.metaValue}>{reel.likes}</p>
                   </div>
                 )}
-                {reel.downloads > 0 && (
+                {reel.comments != null && (
+                  <div>
+                    <p className={styles.metaLabel}>Comments</p>
+                    <p className={styles.metaValue}>{reel.comments}</p>
+                  </div>
+                )}
+                {reel.shares != null && (
+                  <div>
+                    <p className={styles.metaLabel}>Shares</p>
+                    <p className={styles.metaValue}>{reel.shares}</p>
+                  </div>
+                )}
+                {reel.downloads != null && (
                   <div>
                     <p className={styles.metaLabel}>Downloads</p>
-                    <p className={styles.metaValueAccent}>{reel.downloads?.toLocaleString()}</p>
+                    <p className={styles.metaValueAccent}>{reel.downloads}</p>
                   </div>
                 )}
               </div>

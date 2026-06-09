@@ -6,32 +6,26 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./AdminDashboard.module.css";
 
-// Mock stats for dashboard
-const mockStats = {
-  totalReels: 12,
-  totalViews: 24320,
-  totalDownloads: 1544,
-  followers: 748,
-};
 
-const recentActivity = [
-  { type: "download", title: "QALB — Mass Edit", time: "2 hours ago" },
-  { type: "visit", title: "GOD MODE — NTR", time: "3 hours ago" },
-  { type: "download", title: "Ni Dhyaanam — Song Promo", time: "5 hours ago" },
-  { type: "visit", title: "DC Motion Poster", time: "6 hours ago" },
-  { type: "download", title: "MIRAI — Anime Edit", time: "8 hours ago" },
-];
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+  const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
-    if (status === "unauthenticated") router.push("/admin/login");
+    if (status === "unauthenticated") {
+      router.push("/admin/login");
+    } else if (status === "authenticated") {
+      fetch("/api/admin")
+        .then((res) => res.json())
+        .then((data) => setDashboardData(data))
+        .catch((err) => console.error("Failed to load admin data", err));
+    }
   }, [status, router]);
 
-  if (status === "loading") {
+  if (status === "loading" || (status === "authenticated" && !dashboardData)) {
     return (
       <div className={styles.loadingWrapper}>
         <div className={styles.spinner} />
@@ -103,10 +97,10 @@ export default function AdminDashboard() {
             {/* Stats grid */}
             <div className={styles.statsGrid}>
               {[
-                { label: "Total Reels", value: mockStats.totalReels, colorClass: styles.colorAccent },
-                { label: "Total Views", value: mockStats.totalViews.toLocaleString(), colorClass: styles.colorCyan },
-                { label: "Downloads", value: mockStats.totalDownloads.toLocaleString(), colorClass: styles.colorMagenta },
-                { label: "Followers", value: mockStats.followers, colorClass: styles.colorRose },
+                { label: "Total Reels", value: dashboardData.stats.totalReels, colorClass: styles.colorAccent },
+                { label: "Total Views", value: dashboardData.stats.totalViews.toLocaleString(), colorClass: styles.colorCyan },
+                { label: "Downloads", value: dashboardData.stats.totalDownloads.toLocaleString(), colorClass: styles.colorMagenta },
+                { label: "Followers", value: dashboardData.stats.totalFollowers, colorClass: styles.colorRose },
               ].map((stat) => (
                 <div key={stat.label} className={styles.statCard}>
                   <p className={styles.statLabel}>{stat.label}</p>
@@ -119,20 +113,22 @@ export default function AdminDashboard() {
             <div className={styles.sectionCard}>
               <h3 className={styles.sectionTitle}>Recent Activity</h3>
               <div className={styles.sectionContent}>
-                {recentActivity.map((item, i) => (
+                {dashboardData.interactions.map((item, i) => (
                   <div key={i} className={styles.activityRow}>
                     <div className={styles.activityLeft}>
                       <span className={styles.activityIcon}>
-                        {item.type === "download" ? "⬇️" : "👁"}
+                        {item.action_type === "download" ? "⬇️" : "👁"}
                       </span>
                       <div>
-                        <p className={styles.activityTitle}>{item.title}</p>
+                        <p className={styles.activityTitle}>{item.post_title}</p>
                         <p className={styles.activityType}>
-                          {item.type === "download" ? "Downloaded" : "Visited"}
+                          {item.action_type === "download" ? "Downloaded" : "Visited"}
                         </p>
                       </div>
                     </div>
-                    <span className={styles.activityTime}>{item.time}</span>
+                    <span className={styles.activityTime}>
+                      {new Date(item.timestamp).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -159,18 +155,12 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { title: "QALB — Mass Edit", cat: "Mass Edit", views: "1.8K", dl: 245 },
-                    { title: "DC Motion Poster", cat: "Mass Edit", views: "2.1K", dl: 189 },
-                    { title: "GOD MODE — NTR", cat: "Mass Edit", views: "3.4K", dl: 312 },
-                    { title: "MIRAI — Anime Edit", cat: "Anime", views: "2.4K", dl: 198 },
-                    { title: "HANUMAN — Cinematic", cat: "Devotional", views: "2.8K", dl: 0 },
-                  ].map((reel, i) => (
-                    <tr key={i} className={styles.tableRow}>
+                  {dashboardData.reels.map((reel, i) => (
+                    <tr key={reel.id || i} className={styles.tableRow}>
                       <td className={`${styles.tableCell} ${styles.tableCellText}`}>{reel.title}</td>
-                      <td className={`${styles.tableCell} ${styles.tableCellMuted} ${styles.hideMobile}`}>{reel.cat}</td>
-                      <td className={`${styles.tableCell} ${styles.tableCellMuted}`}>{reel.views}</td>
-                      <td className={`${styles.tableCell} ${styles.tableCellAccent}`}>{reel.dl}</td>
+                      <td className={`${styles.tableCell} ${styles.tableCellMuted} ${styles.hideMobile}`}>{reel.category}</td>
+                      <td className={`${styles.tableCell} ${styles.tableCellMuted}`}>{reel.view_count || reel.views || 0}</td>
+                      <td className={`${styles.tableCell} ${styles.tableCellAccent}`}>{reel.download_count || reel.downloads || 0}</td>
                       <td className={styles.tableCellActions}>
                         <button className={styles.actionEdit}>Edit</button>
                         <button className={styles.actionDelete}>Delete</button>
@@ -190,47 +180,51 @@ export default function AdminDashboard() {
               <div className={styles.sectionCard}>
                 <h3 className={styles.sectionTitle}>Top Performing Reels</h3>
                 <div className={styles.sectionContent}>
-                  {[
-                    { title: "GOD MODE — NTR", views: 3400, pct: 100 },
-                    { title: "Vaana Chinukulu", views: 3100, pct: 91 },
-                    { title: "HANUMAN — Cinematic", views: 2800, pct: 82 },
-                  ].map((r) => (
-                    <div key={r.title}>
+                  {[...dashboardData.reels]
+                    .sort((a, b) => (b.view_count || b.views || 0) - (a.view_count || a.views || 0))
+                    .slice(0, 3)
+                    .map((r, _, arr) => {
+                      const maxViews = arr[0].view_count || arr[0].views || 1;
+                      const views = r.view_count || r.views || 0;
+                      return (
+                    <div key={r.id || r.title}>
                       <div className={styles.barLabel}>
                         <span className={styles.barLabelTitle}>{r.title}</span>
-                        <span className={styles.colorCyan}>{r.views.toLocaleString()}</span>
+                        <span className={styles.colorCyan}>{views.toLocaleString()}</span>
                       </div>
                       <div className={styles.barTrack}>
                         <div
                           className={`${styles.barFill} ${styles.barFillViews}`}
-                          style={{ width: `${r.pct}%` }}
+                          style={{ width: `${(views / maxViews) * 100}%` }}
                         />
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
               <div className={styles.sectionCard}>
                 <h3 className={styles.sectionTitle}>Most Downloaded</h3>
                 <div className={styles.sectionContent}>
-                  {[
-                    { title: "GOD MODE — NTR", dl: 312, pct: 100 },
-                    { title: "QALB — Mass Edit", dl: 245, pct: 78 },
-                    { title: "Vaana Chinukulu", dl: 223, pct: 71 },
-                  ].map((r) => (
-                    <div key={r.title}>
+                  {[...dashboardData.reels]
+                    .sort((a, b) => (b.download_count || b.downloads || 0) - (a.download_count || a.downloads || 0))
+                    .slice(0, 3)
+                    .map((r, _, arr) => {
+                      const maxDl = arr[0].download_count || arr[0].downloads || 1;
+                      const dl = r.download_count || r.downloads || 0;
+                      return (
+                    <div key={r.id || r.title}>
                       <div className={styles.barLabel}>
                         <span className={styles.barLabelTitle}>{r.title}</span>
-                        <span className={styles.colorMagenta}>{r.dl}</span>
+                        <span className={styles.colorMagenta}>{dl}</span>
                       </div>
                       <div className={styles.barTrack}>
                         <div
                           className={`${styles.barFill} ${styles.barFillDownloads}`}
-                          style={{ width: `${r.pct}%` }}
+                          style={{ width: `${(dl / maxDl) * 100}%` }}
                         />
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             </div>
