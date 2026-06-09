@@ -425,6 +425,38 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
+
+            <div className={styles.sectionCard} style={{ marginTop: "2rem" }}>
+              <h3 className={styles.sectionTitle}>Detailed Reel Analytics</h3>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead className={styles.tableHead}>
+                    <tr>
+                      <th className={styles.tableHeadCell}>Reel Title</th>
+                      <th className={styles.tableHeadCell}>Views</th>
+                      <th className={styles.tableHeadCell}>Likes</th>
+                      <th className={styles.tableHeadCell}>Comments</th>
+                      <th className={styles.tableHeadCell}>Shares</th>
+                      <th className={styles.tableHeadCell}>Downloads</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...dashboardData.reels]
+                      .sort((a, b) => (b.view_count || b.views || 0) - (a.view_count || a.views || 0))
+                      .map((r, i) => (
+                      <tr key={r.id || i} className={styles.tableRow}>
+                        <td className={`${styles.tableCell} ${styles.tableCellText}`}>{r.title}</td>
+                        <td className={`${styles.tableCell} ${styles.colorCyan}`}>{(r.view_count || r.views || 0).toLocaleString()}</td>
+                        <td className={`${styles.tableCell}`}>{r.likes_count || r.likes || 0}</td>
+                        <td className={`${styles.tableCell}`}>{r.comments_count || r.comments || 0}</td>
+                        <td className={`${styles.tableCell}`}>{r.shares_count || r.shares || 0}</td>
+                        <td className={`${styles.tableCell} ${styles.colorMagenta}`}>{r.download_count || r.downloads || 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 

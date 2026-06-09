@@ -20,6 +20,7 @@ export function normalizeReel(reel) {
     description: reel.description || "",
     category: CATEGORY_MAP[reel.category] || reel.category || "Mass Edit",
     thumbnailUrl: reel.thumbnail_url || reel.thumbnailUrl || "",
+    videoUrl: reel.video_url || reel.videoUrl || reel.videoUrl || "",
     instagramUrl: reel.instagram_url || reel.instagramUrl || "",
     projectFileUrl,
     projectFileType: reel.project_file_type || reel.projectFileType || "",
