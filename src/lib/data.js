@@ -198,10 +198,12 @@ const MOCK_INTERACTIONS = [
 export async function getReels(limit = null) {
   try {
     if (adminDb) {
-      let query = adminDb.collection("posts").where("is_visible", "==", true).orderBy("created_at", "desc");
-      if (limit) query = query.limit(limit);
+      let query = adminDb.collection("posts").orderBy("created_at", "desc");
       const snapshot = await query.get();
-      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      let docs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      docs = docs.filter(doc => doc.is_visible === true);
+      if (limit) docs = docs.slice(0, limit);
+      return docs;
     }
   } catch (e) {
     console.warn("Firestore fetch failed, using mock data:", e.message);
@@ -215,12 +217,11 @@ export async function getFeaturedReels() {
     if (adminDb) {
       const snapshot = await adminDb
         .collection("posts")
-        .where("is_featured", "==", true)
-        .where("is_visible", "==", true)
         .orderBy("created_at", "desc")
-        .limit(6)
         .get();
-      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        
+      let docs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      return docs.filter(doc => doc.is_featured === true && doc.is_visible === true).slice(0, 6);
     }
   } catch (e) {
     console.warn("Firestore fetch failed, using mock data:", e.message);

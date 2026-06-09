@@ -6,7 +6,22 @@ let adminAuth = null;
 
 try {
   if (!admin.apps.length) {
-    if (
+    // Try to load local service account key first (for development)
+    let serviceAccount = null;
+    try {
+      if (process.env.NODE_ENV === "development") {
+        serviceAccount = require("../../scripts/serviceAccountKey.json");
+      }
+    } catch (e) {
+      // Ignore if file doesn't exist
+    }
+
+    if (serviceAccount) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "omkar-creations.firebasestorage.app",
+      });
+    } else if (
       process.env.FIREBASE_PRIVATE_KEY &&
       process.env.FIREBASE_CLIENT_EMAIL
     ) {
@@ -16,7 +31,7 @@ try {
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
           privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
         }),
-        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "omkar-creations.firebasestorage.app",
       });
     }
   }

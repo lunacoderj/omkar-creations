@@ -50,7 +50,9 @@ const CATEGORY_RULES = [
 ];
 
 function detectCategory(caption, hashtags) {
-  const text = `${caption} ${(hashtags || []).join(" ")}`.toLowerCase();
+  // Apify hashtags include '#' prefix — strip them for matching
+  const cleanTags = (hashtags || []).map((h) => h.replace(/^#/, ""));
+  const text = `${caption} ${cleanTags.join(" ")}`.toLowerCase();
   for (const rule of CATEGORY_RULES) {
     if (rule.keywords.some((kw) => text.includes(kw))) {
       return rule.category;
@@ -97,32 +99,44 @@ function extractDescription(caption) {
 }
 
 // ─── Transform Apify Data → Firestore Schema ────────────
+// Field mapping for Apify ig-reels-scraper:
+//   code         → instagram_shortcode
+//   post_url     → instagram_url  
+//   caption      → title + description
+//   play_count   → view_count
+//   like_count   → likes_count
+//   comment_count→ comments_count
+//   thumbnail_url→ thumbnail_url (CDN, may expire)
+//   taken_at_formatted → created_at
+//   hashtags     → hashtags (includes # prefix)
 function transformReel(apifyItem, index) {
-  const shortCode = apifyItem.shortCode || apifyItem.shortcode || apifyItem.id || "";
+  const shortCode = apifyItem.code || apifyItem.shortCode || apifyItem.shortcode || "";
   const caption = apifyItem.caption || apifyItem.alt || "";
-  const hashtags = apifyItem.hashtags || [];
+  const rawHashtags = apifyItem.hashtags || [];
+  // Strip '#' prefix from hashtags for clean storage
+  const cleanHashtags = rawHashtags.map((h) => h.replace(/^#/, ""));
   
   return {
     title: extractTitle(caption),
-    category: detectCategory(caption, hashtags),
+    category: detectCategory(caption, rawHashtags),
     description: extractDescription(caption),
-    instagram_url: apifyItem.url || `https://www.instagram.com/reel/${shortCode}/`,
+    instagram_url: apifyItem.post_url || apifyItem.url || `https://www.instagram.com/reel/${shortCode}/`,
     instagram_shortcode: shortCode,
     // Use Instagram embed for playback — CDN URLs expire, embeds don't
     embed_url: `https://www.instagram.com/reel/${shortCode}/embed`,
-    // Store the CDN thumbnail — we'll handle fallback in the frontend
-    thumbnail_url: apifyItem.displayUrl || apifyItem.thumbnailUrl || apifyItem.display_url || "",
+    // Store the CDN thumbnail — may expire after ~48h
+    thumbnail_url: apifyItem.thumbnail_url || apifyItem.displayUrl || apifyItem.display_url || "",
     project_file_url: "",
     project_file_type: "",
     is_featured: false,
     is_visible: true,
     download_count: 0,
-    view_count: apifyItem.videoViewCount || apifyItem.video_view_count || apifyItem.viewCount || 0,
-    likes_count: apifyItem.likesCount || apifyItem.likes_count || apifyItem.likes || 0,
-    comments_count: apifyItem.commentsCount || apifyItem.comments_count || apifyItem.comments || 0,
-    hashtags: hashtags,
-    owner_username: apifyItem.ownerUsername || apifyItem.owner_username || "",
-    created_at: apifyItem.timestamp || apifyItem.taken_at || new Date().toISOString(),
+    view_count: apifyItem.play_count || apifyItem.videoViewCount || apifyItem.viewCount || 0,
+    likes_count: apifyItem.like_count || apifyItem.likesCount || apifyItem.likes || 0,
+    comments_count: apifyItem.comment_count || apifyItem.commentsCount || apifyItem.comments || 0,
+    hashtags: cleanHashtags,
+    owner_username: apifyItem.owner_id || apifyItem.ownerUsername || "",
+    created_at: apifyItem.taken_at_formatted || apifyItem.timestamp || new Date().toISOString(),
     imported_at: new Date().toISOString(),
     source: "apify_import",
     original_apify_id: apifyItem.id || "",
@@ -197,9 +211,11 @@ async function main() {
 
   // ─── Filter to only video/reel content ─────────────────
   const reelItems = items.filter((item) => {
-    const type = (item.type || item.media_type || "").toLowerCase();
-    // Include videos, reels, and items without a type (assume reel)
-    return type === "" || type === "video" || type === "reel" || type === "clips";
+    const postType = (item.post_type || item.type || item.media_type || "").toLowerCase();
+    const kind = (item.kind || "").toLowerCase();
+    // Include reels, videos, clips, and generic posts
+    return postType === "reel" || postType === "video" || postType === "clips" ||
+           kind === "post" || postType === "";
   });
 
   console.log(`🎞️  Filtered to ${reelItems.length} video/reel items`);
