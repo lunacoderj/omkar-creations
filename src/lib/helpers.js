@@ -2,12 +2,15 @@
 
 const CATEGORY_MAP = {
   mass_edit: "Mass Edit",
-  motion_poster: "Mass Edit",
-  devotional: "Devotional",
-  song_promo: "Song Promo",
   anime: "Anime",
+  vfx: "VFX & Motion",
+  devotional: "Devotional",
   cinema: "Cinema",
-  trending: "Trending",
+  project_file: "Project Files",
+  sad_edit: "Sad & Emotional",
+  love_edit: "Love & Romantic",
+  song_promo: "Song Promo",
+  other: "Other"
 };
 
 export function normalizeReel(reel) {
@@ -20,7 +23,8 @@ export function normalizeReel(reel) {
     description: reel.description || "",
     category: CATEGORY_MAP[reel.category] || reel.category || "Mass Edit",
     thumbnailUrl: reel.thumbnail_url || reel.thumbnailUrl || "",
-    videoUrl: reel.video_url || reel.videoUrl || reel.videoUrl || "",
+    videoUrl: reel.video_url || reel.videoUrl || "",
+    embedUrl: reel.embed_url || reel.embedUrl || "",
     instagramUrl: reel.instagram_url || reel.instagramUrl || "",
     projectFileUrl,
     projectFileType: reel.project_file_type || reel.projectFileType || "",

@@ -6,12 +6,24 @@ import ReelCardSkeleton from "@/components/public/ReelCardSkeleton";
 import ScrollReveal from "@/components/public/ScrollReveal";
 import styles from "./ReelsGrid.module.css";
 
-const categories = ["All", "Mass Edit", "4K Cinematic", "Anime", "VFX", "Project File"];
+const CATEGORIES = [
+  { id: "all", label: "All" },
+  { id: "mass_edit", label: "Mass Edit" },
+  { id: "anime", label: "Anime" },
+  { id: "vfx", label: "VFX & Motion" },
+  { id: "devotional", label: "Devotional" },
+  { id: "cinema", label: "Cinema" },
+  { id: "project_file", label: "Project Files" },
+  { id: "sad_edit", label: "Sad & Emotional" },
+  { id: "love_edit", label: "Love & Romantic" },
+  { id: "song_promo", label: "Song Promo" },
+  { id: "other", label: "Other" }
+];
 
 export default function ReelsGrid() {
   const [reels, setReels] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [active, setActive] = useState("All");
+  const [active, setActive] = useState("all");
 
   useEffect(() => {
     const fetchReels = async () => {
@@ -28,9 +40,9 @@ export default function ReelsGrid() {
     fetchReels();
   }, []);
 
-  const filtered = active === "All"
+  const filtered = active === "all"
     ? reels
-    : reels.filter((r) => r.category?.toLowerCase() === active.toLowerCase());
+    : reels.filter((r) => r.category === active);
 
   return (
     <div className={styles.wrapper}>
@@ -38,13 +50,13 @@ export default function ReelsGrid() {
       <ScrollReveal>
         <div className={styles.filters}>
           <div className={styles.filterRow}>
-            {categories.map((cat) => (
+            {CATEGORIES.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setActive(cat)}
-                className={active === cat ? styles.filterBtnActive : styles.filterBtn}
+                key={cat.id}
+                onClick={() => setActive(cat.id)}
+                className={active === cat.id ? styles.filterBtnActive : styles.filterBtn}
               >
-                {cat}
+                {cat.label}
               </button>
             ))}
           </div>

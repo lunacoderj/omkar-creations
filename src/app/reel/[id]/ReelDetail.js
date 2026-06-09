@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import ScrollReveal from "@/components/public/ScrollReveal";
@@ -10,6 +10,25 @@ export default function ReelDetail() {
   const { id } = useParams();
   const [reel, setReel] = useState(null);
   const [loading, setLoading] = useState(true);
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = (e) => {
+    e.stopPropagation();
+    setIsMuted(!isMuted);
+  };
 
   useEffect(() => {
     const fetchReel = async () => {
@@ -76,12 +95,50 @@ export default function ReelDetail() {
           <ScrollReveal direction="left">
             <div className={styles.mediaWrap}>
               {reel.videoUrl ? (
-                <video
-                  src={reel.videoUrl}
-                  poster={reel.thumbnailUrl}
-                  controls
+                <>
+                  <video
+                    ref={videoRef}
+                    src={reel.videoUrl}
+                    poster={reel.thumbnailUrl}
+                    className={styles.media}
+                    playsInline
+                    autoPlay
+                    loop
+                    muted={isMuted}
+                    onClick={togglePlay}
+                  />
+                  {!isPlaying && (
+                    <div className={styles.playOverlay} onClick={togglePlay}>
+                      <svg className={styles.playIcon} viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  )}
+                  <button className={styles.muteBtn} onClick={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
+                    {isMuted ? (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.muteIcon}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        <line x1="17" y1="14" x2="23" y2="8" strokeLinecap="round" strokeLinejoin="round"/>
+                        <line x1="17" y1="8" x2="23" y2="14" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.muteIcon}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.54 8.46a5 5 0 010 7.07"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.07 4.93a10 10 0 010 14.14"/>
+                      </svg>
+                    )}
+                  </button>
+                </>
+              ) : reel.embedUrl ? (
+                <iframe
+                  src={reel.embedUrl}
                   className={styles.media}
-                  playsInline
+                  frameBorder="0"
+                  scrolling="no"
+                  allowTransparency="true"
+                  allow="encrypted-media"
+                  title={reel.title}
                 />
               ) : reel.thumbnailUrl ? (
                 <img src={reel.thumbnailUrl} alt={reel.title} className={styles.media} />

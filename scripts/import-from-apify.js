@@ -39,14 +39,15 @@ const BATCH_SIZE = 450; // Stay under Firestore's 500-write batch limit
 // ─── Category Detection ─────────────────────────────────
 // Maps keywords in captions/hashtags to portfolio categories
 const CATEGORY_RULES = [
-  { keywords: ["mass", "mass edit", "massedit", "beast", "god mode", "ogmode"], category: "mass_edit" },
-  { keywords: ["anime", "amv", "manga", "mirai", "naruto", "one piece", "jujutsu"], category: "anime" },
-  { keywords: ["motion poster", "motionposter", "poster"], category: "motion_poster" },
-  { keywords: ["song", "promo", "lyrical", "music", "melody"], category: "song_promo" },
-  { keywords: ["devotional", "god", "hanuman", "shiva", "krishna", "temple"], category: "devotional" },
-  { keywords: ["cinema", "cinematic", "movie", "film", "bahubali", "rrr", "pushpa"], category: "cinema" },
-  { keywords: ["tutorial", "howto", "how to", "learn", "tips"], category: "tutorial" },
-  { keywords: ["collab", "collaboration", "ft", "feat"], category: "collab" },
+  { keywords: ["mass", "mass edit", "massedit", "beast", "god mode", "ogmode", "masstelugusongs", "massbgm", "elevation", "attitude", "kalki", "kgf"], category: "mass_edit" },
+  { keywords: ["anime", "amv", "manga", "mirai", "naruto", "one piece", "jujutsu", "otaku", "gojo", "sukuna"], category: "anime" },
+  { keywords: ["vfx", "aftereffects", "motion poster", "motionposter", "poster", "motion", "cgi", "blender", "edit"], category: "vfx" },
+  { keywords: ["devotional", "god", "hanuman", "shiva", "krishna", "temple", "parvati", "shivaji", "shiv", "ram", "bhakti", "hindu"], category: "devotional" },
+  { keywords: ["cinema", "cinematic", "movie", "film", "bahubali", "rrr", "pushpa", "tollywood", "salaar", "prabhas", "telugucinema", "ntr", "ramcharan", "alluarjun"], category: "cinema" },
+  { keywords: ["tutorial", "howto", "how to", "learn", "tips", "breakdown", "project file", "projectfile", "giveaway", "preset"], category: "project_file" },
+  { keywords: ["love failure", "broken heart", "brokenheart", "lovefailure", "sadtelugusongs", "heartbreakstory", "broken", "emotional", "lovehurts", "lovefailed", "sad", "pain", "heartbreak"], category: "sad_edit" },
+  { keywords: ["love", "romantictelugusongs", "lovesongs", "romantic", "couple", "feelgoodsongs", "lalithaedits", "wedding", "prewedding"], category: "love_edit" },
+  { keywords: ["song", "promo", "lyrical", "music", "melody", "lyrics", "telugusongs", "teluguhits", "teluguplaylist", "telugubeats", "telugualbum", "retrotelugusongs", "audio", "bgm", "trendingaudio"], category: "song_promo" },
 ];
 
 function detectCategory(caption, hashtags) {
@@ -122,6 +123,7 @@ function transformReel(apifyItem, index) {
     description: extractDescription(caption),
     instagram_url: apifyItem.post_url || apifyItem.url || `https://www.instagram.com/reel/${shortCode}/`,
     instagram_shortcode: shortCode,
+    video_url: apifyItem.video_url || apifyItem.videoUrl || "",
     // Use Instagram embed for playback — CDN URLs expire, embeds don't
     embed_url: `https://www.instagram.com/reel/${shortCode}/embed`,
     // Store the CDN thumbnail — may expire after ~48h

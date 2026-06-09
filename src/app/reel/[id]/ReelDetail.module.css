@@ -309,3 +309,54 @@
 .notFoundLink:hover {
   text-decoration: underline;
 }
+
+/* ── Video Player Custom Controls ── */
+.playOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  z-index: 5;
+}
+
+.playIcon {
+  width: 4rem;
+  height: 4rem;
+  color: white;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.playOverlay:hover .playIcon {
+  opacity: 1;
+}
+
+.muteBtn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: background 0.3s;
+  z-index: 10;
+}
+
+.muteBtn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.muteIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
