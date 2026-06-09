@@ -281,3 +281,35 @@ export async function getStats() {
     totalFollowers: 748,
   };
 }
+
+export async function updateReel(id, updates) {
+  try {
+    if (adminDb) {
+      await adminDb.collection("posts").doc(id).update(updates);
+      return { success: true };
+    }
+  } catch (e) {
+    console.error("Failed to update reel:", e.message);
+    return { success: false, error: e.message };
+  }
+  // Mock fallback
+  const index = MOCK_REELS.findIndex((r) => r.id === id);
+  if (index !== -1) {
+    MOCK_REELS[index] = { ...MOCK_REELS[index], ...updates };
+    return { success: true };
+  }
+  return { success: false, error: "Not found" };
+}
+
+export async function deleteReel(id) {
+  try {
+    if (adminDb) {
+      await adminDb.collection("posts").doc(id).delete();
+      return { success: true };
+    }
+  } catch (e) {
+    console.error("Failed to delete reel:", e.message);
+    return { success: false, error: e.message };
+  }
+  return { success: true };
+}

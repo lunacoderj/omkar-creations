@@ -13,6 +13,8 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
   const [dashboardData, setDashboardData] = useState(null);
+  const [editingReel, setEditingReel] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -24,6 +26,51 @@ export default function AdminDashboard() {
         .catch((err) => console.error("Failed to load admin data", err));
     }
   }, [status, router]);
+
+  const handleEdit = (reel) => {
+    setEditingReel({ ...reel });
+  };
+
+  const handleSaveReel = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch(`/api/reels/${editingReel.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: editingReel.title,
+          category: editingReel.category,
+          project_file_url: editingReel.project_file_url,
+          is_visible: editingReel.is_visible,
+        }),
+      });
+      if (res.ok) {
+        setDashboardData(prev => ({
+          ...prev,
+          reels: prev.reels.map(r => r.id === editingReel.id ? { ...r, ...editingReel } : r)
+        }));
+        setEditingReel(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setIsSaving(false);
+  };
+
+  const handleDeleteReel = async (id) => {
+    if (!confirm("Are you sure you want to delete this reel?")) return;
+    try {
+      const res = await fetch(`/api/reels/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setDashboardData(prev => ({
+          ...prev,
+          reels: prev.reels.filter(r => r.id !== id)
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (status === "loading" || (status === "authenticated" && !dashboardData)) {
     return (
@@ -162,14 +209,66 @@ export default function AdminDashboard() {
                       <td className={`${styles.tableCell} ${styles.tableCellMuted}`}>{reel.view_count || reel.views || 0}</td>
                       <td className={`${styles.tableCell} ${styles.tableCellAccent}`}>{reel.download_count || reel.downloads || 0}</td>
                       <td className={styles.tableCellActions}>
-                        <button className={styles.actionEdit}>Edit</button>
-                        <button className={styles.actionDelete}>Delete</button>
+                        <button className={styles.actionEdit} onClick={() => handleEdit(reel)}>Edit</button>
+                        <button className={styles.actionDelete} onClick={() => handleDeleteReel(reel.id)}>Delete</button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+
+            {/* Edit Modal */}
+            {editingReel && (
+              <div className={styles.modalOverlay}>
+                <div className={styles.modalContent}>
+                  <h3 className={styles.modalTitle}>Edit Reel</h3>
+                  <div className={styles.modalForm}>
+                    <div className={styles.formGroup}>
+                      <label>Title</label>
+                      <input 
+                        type="text" 
+                        value={editingReel.title || ""} 
+                        onChange={(e) => setEditingReel({...editingReel, title: e.target.value})} 
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Category</label>
+                      <input 
+                        type="text" 
+                        value={editingReel.category || ""} 
+                        onChange={(e) => setEditingReel({...editingReel, category: e.target.value})} 
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Project File URL</label>
+                      <input 
+                        type="text" 
+                        placeholder="https://link-to-project-file"
+                        value={editingReel.project_file_url || ""} 
+                        onChange={(e) => setEditingReel({...editingReel, project_file_url: e.target.value})} 
+                      />
+                    </div>
+                    <div className={styles.formGroupCheck}>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={editingReel.is_visible !== false} 
+                          onChange={(e) => setEditingReel({...editingReel, is_visible: e.target.checked})} 
+                        />
+                        {" Visible to Public"}
+                      </label>
+                    </div>
+                  </div>
+                  <div className={styles.modalActions}>
+                    <button className={styles.modalCancel} onClick={() => setEditingReel(null)}>Cancel</button>
+                    <button className={styles.modalSave} onClick={handleSaveReel} disabled={isSaving}>
+                      {isSaving ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
