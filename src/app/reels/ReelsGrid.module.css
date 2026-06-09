@@ -1,0 +1,83 @@
+/* ════════════════════════════════════
+   REELS GRID — CSS Module
+   ════════════════════════════════════ */
+
+.wrapper {
+  width: 100%;
+}
+
+/* ── Category filters ── */
+.filters {
+  margin-bottom: 3rem;
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.filterBtn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  border: 1px solid rgba(31, 29, 43, 0.3);
+  color: var(--color-text-muted, #5c586e);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.filterBtn:hover {
+  color: var(--color-text, #f5f3ff);
+  border-color: rgba(31, 29, 43, 0.6);
+}
+
+.filterBtnActive {
+  composes: filterBtn;
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: var(--color-accent, #f59e0b);
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Empty state ── */
+.empty {
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.emptyTitle {
+  color: var(--color-text-muted, #5c586e);
+  font-size: 1.125rem;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+}
+
+.emptySubtitle {
+  color: rgba(92, 88, 110, 0.5);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}

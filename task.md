@@ -1,0 +1,8 @@
+- [x] Create `src/components/ui/Card.js`
+- [x] Create `src/components/ui/Skeleton.js`
+- [x] Create `src/components/public/ReelCardSkeleton.js`
+- [x] Update `src/components/public/ReelCard.js` 
+- [x] Update `src/components/public/FeaturedReels.js`
+- [x] Update `src/app/reels/ReelsGrid.js`
+- [ ] Update `src/components/public/AboutWork.js`
+- [ ] Update `src/components/public/Hero.js`

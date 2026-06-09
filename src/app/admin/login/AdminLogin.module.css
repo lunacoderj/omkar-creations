@@ -1,0 +1,224 @@
+/* ═══════════════════════════════════════════
+   ADMIN LOGIN — AdminLogin.module.css
+   ═══════════════════════════════════════════ */
+
+.loginWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  position: relative;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 15%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 80% at 85% 25%, rgba(232, 57, 246, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 50% at 50% 80%, rgba(34, 211, 238, 0.04) 0%, transparent 50%),
+    var(--color-bg);
+}
+
+/* Decorative background orbs */
+.orbTopLeft {
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 16rem;
+  height: 16rem;
+  background: rgba(245, 158, 11, 0.06);
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+}
+
+.orbBottomRight {
+  position: absolute;
+  bottom: 33%;
+  right: 25%;
+  width: 18rem;
+  height: 18rem;
+  background: rgba(232, 57, 246, 0.05);
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+}
+
+/* Card container */
+.loginContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 24rem;
+}
+
+/* Logo section */
+.logoSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logoBox {
+  display: inline-flex;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2), var(--color-accent-3));
+  padding: 2px;
+  margin-bottom: 1rem;
+}
+
+.logoInner {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoInitials {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2), var(--color-accent-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loginTitle {
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  letter-spacing: 0.15em;
+  color: var(--color-text);
+}
+
+.loginSubtitle {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Card */
+.loginCard {
+  border-radius: 1rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Instagram button */
+.igButton {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(to right, #833AB4, #FD1D1D, #F77737);
+  color: white;
+  font-size: 0.875rem;
+  font-family: var(--font-heading);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+}
+
+.igButton:hover {
+  opacity: 0.9;
+}
+
+.igButton svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.dividerText {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.input {
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input:focus {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.error {
+  color: var(--color-error);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.625rem;
+  border-radius: 0.75rem;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-accent);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  font-size: 0.875rem;
+  font-family: var(--font-heading);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer note */
+.footerNote {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  text-align: center;
+  margin-top: 1rem;
+}

@@ -1,0 +1,364 @@
+/* ════════════════════════════════════
+   CONTACT PAGE — CSS Module
+   ════════════════════════════════════ */
+
+.section {
+  padding-top: 8rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 640px) {
+  .section {
+    padding-top: 10rem;
+    padding-bottom: 8rem;
+  }
+}
+
+.container {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 2.5rem;
+  }
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.headerLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.headerLine {
+  width: 3rem;
+  height: 1px;
+  background: var(--color-accent-3, #22d3ee);
+}
+
+.headerTag {
+  color: var(--color-accent-3, #22d3ee);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+}
+
+.title {
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  color: var(--color-text, #f5f3ff);
+}
+
+.titleAccent {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent, #f59e0b),
+    var(--color-accent-2, #e839f6),
+    var(--color-accent-3, #22d3ee)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--color-text-secondary, #a09cb5);
+  font-size: 14px;
+  max-width: 28rem;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+@media (min-width: 640px) {
+  .subtitle {
+    font-size: 16px;
+  }
+}
+
+/* ── Two-column layout ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Contact methods ── */
+.methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.methodCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(31, 29, 43, 0.2);
+  background: rgba(19, 18, 27, 0.2);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.5s ease;
+}
+
+.methodCard:hover {
+  background: rgba(19, 18, 27, 0.4);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.methodIcon {
+  margin-top: 2px;
+  opacity: 0.6;
+  transition: opacity 0.5s;
+}
+
+.methodCard:hover .methodIcon {
+  opacity: 1;
+}
+
+.methodLabel {
+  color: var(--color-text-muted, #5c586e);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  margin-bottom: 0.25rem;
+}
+
+.methodValue {
+  color: var(--color-text, #f5f3ff);
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  transition: color 0.5s;
+}
+
+@media (min-width: 640px) {
+  .methodValue {
+    font-size: 16px;
+  }
+}
+
+.methodCard:hover .methodValue {
+  color: var(--color-accent, #f59e0b);
+}
+
+/* Icon color variants */
+.iconAccent4 { color: var(--color-accent-4, #f43f5e); }
+.iconAccent  { color: var(--color-accent, #f59e0b); }
+.iconAccent3 { color: var(--color-accent-3, #22d3ee); }
+
+/* ── Pro tip box ── */
+.proTip {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(232, 57, 246, 0.04));
+  border: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+.proTipText {
+  color: var(--color-text-secondary, #a09cb5);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.proTipHighlight {
+  color: var(--color-accent, #f59e0b);
+  font-weight: 600;
+}
+
+.proTipLink {
+  color: var(--color-accent, #f59e0b);
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.proTipLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Form ── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fieldLabel {
+  display: block;
+  color: var(--color-text-muted, #5c586e);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  margin-bottom: 0.5rem;
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 0.75rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(31, 29, 43, 0.3);
+  color: var(--color-text, #f5f3ff);
+  font-size: 14px;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: border-color 0.4s;
+}
+
+.fieldInput::placeholder {
+  color: rgba(92, 88, 110, 0.3);
+}
+
+.fieldInput:focus {
+  border-color: var(--color-accent, #f59e0b);
+}
+
+.fieldTextarea {
+  composes: fieldInput;
+  resize: none;
+}
+
+/* ── Submit button ── */
+.submitBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  font-size: 14px;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (min-width: 640px) {
+  .submitBtn {
+    width: auto;
+  }
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submitBtnBg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--color-accent, #f59e0b), var(--color-accent-2, #e839f6), var(--color-accent-3, #22d3ee));
+  transition: transform 0.5s;
+}
+
+.submitBtn:hover .submitBtnBg {
+  transform: scale(1.1);
+}
+
+.submitBtnGlow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--color-accent, #f59e0b), var(--color-accent-2, #e839f6), var(--color-accent-3, #22d3ee));
+  filter: blur(20px);
+  opacity: 0.4;
+  transition: opacity 0.5s;
+}
+
+.submitBtn:hover .submitBtnGlow {
+  opacity: 0.7;
+}
+
+.submitBtnLabel {
+  position: relative;
+  z-index: 10;
+  font-weight: 600;
+}
+
+/* ── Success state ── */
+.successWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  gap: 1rem;
+  padding: 4rem 0;
+}
+
+.successIcon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.successIconSvg {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-accent, #f59e0b);
+}
+
+.successTitle {
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-text, #f5f3ff);
+}
+
+.successSubtitle {
+  color: var(--color-text-secondary, #a09cb5);
+  font-size: 14px;
+  max-width: 20rem;
+}
+
+.successReset {
+  color: var(--color-accent, #f59e0b);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.successReset:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,470 @@
+/* ────────────── HERO ────────────── */
+.section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Push content below the fixed navbar (~68px) + breathing room */
+  padding-top: 80px;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 15%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 80% at 85% 25%, rgba(232, 57, 246, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 50% at 50% 80%, rgba(34, 211, 238, 0.04) 0%, transparent 50%),
+    var(--color-bg, #07060b);
+}
+
+/* ── Parallax orbs ── */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.3s ease-out;
+}
+
+.orb1 {
+  width: 500px;
+  height: 500px;
+  filter: blur(180px);
+  opacity: 0.07;
+  background: radial-gradient(circle, #f59e0b, transparent 70%);
+  top: 10%;
+  left: 5%;
+}
+
+.orb2 {
+  width: 600px;
+  height: 600px;
+  filter: blur(200px);
+  opacity: 0.05;
+  background: radial-gradient(circle, #e839f6, transparent 70%);
+  bottom: 5%;
+  right: 0%;
+}
+
+.orb3 {
+  width: 400px;
+  height: 400px;
+  filter: blur(160px);
+  opacity: 0.05;
+  background: radial-gradient(circle, #22d3ee, transparent 70%);
+  top: 50%;
+  left: 50%;
+}
+
+/* ── Floating emojis ── */
+.floatIcon {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.4s ease-out;
+}
+
+/* ── Main content wrapper ── */
+.content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.05);
+  margin-bottom: 40px;
+  transition: opacity 1s, transform 1s;
+}
+
+.badgeHidden {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+
+.badgeVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.badgeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.badgeText {
+  color: #f59e0b;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+}
+
+/* ── Title ── */
+.titleWrap {
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.titleWrap2 {
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.titleLine {
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-weight: 700;
+  font-size: clamp(3rem, 12vw, 9rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  padding: 8px 0;
+  color: #fff;
+  transition: opacity 1s, transform 1s;
+}
+
+.titleGradient {
+  composes: titleLine;
+  background: linear-gradient(135deg, var(--color-accent, #f59e0b), var(--color-accent-2, #e839f6), var(--color-accent-3, #22d3ee));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.titleHidden {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.titleVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Rotating role ── */
+.roleWrap {
+  height: 24px;
+  margin-bottom: 48px;
+  overflow: hidden;
+  transition: opacity 1s;
+}
+
+@media (min-width: 640px) {
+  .roleWrap {
+    margin-bottom: 64px;
+  }
+}
+
+.roleInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.roleLine {
+  width: 48px;
+  height: 1px;
+  background: rgba(245, 158, 11, 0.4);
+}
+
+.roleText {
+  color: #f59e0b;
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+}
+
+@media (min-width: 640px) {
+  .roleText {
+    font-size: 12px;
+  }
+}
+
+/* ── Tagline ── */
+.tagline {
+  color: var(--color-text-secondary, #a09cb5);
+  font-size: 16px;
+  max-width: 640px;
+  margin: 0 auto 64px;
+  line-height: 1.7;
+  transition: opacity 1s;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .tagline {
+    font-size: 18px;
+  }
+}
+
+.taglineBr {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .taglineBr {
+    display: block;
+  }
+}
+
+/* ── CTA buttons ── */
+.ctaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 96px;
+  transition: opacity 1s, transform 1s;
+}
+
+@media (min-width: 640px) {
+  .ctaRow {
+    flex-direction: row;
+    margin-bottom: 128px;
+  }
+}
+
+.ctaHidden {
+  opacity: 0;
+  transform: translateY(32px);
+}
+
+.ctaVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ctaPrimary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 40px;
+  border-radius: 9999px;
+  overflow: hidden;
+  font-size: 14px;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.ctaPrimaryBg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #f59e0b, #e839f6, #22d3ee);
+  transition: transform 0.5s;
+}
+
+.ctaPrimary:hover .ctaPrimaryBg {
+  transform: scale(1.1);
+}
+
+.ctaPrimaryGlow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #f59e0b, #e839f6, #22d3ee);
+  filter: blur(20px);
+  opacity: 0.4;
+  transition: opacity 0.5s;
+}
+
+.ctaPrimary:hover .ctaPrimaryGlow {
+  opacity: 0.7;
+}
+
+.ctaPrimaryLabel {
+  position: relative;
+  z-index: 10;
+  font-weight: 600;
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 40px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-text-secondary, #a09cb5);
+  border: 1px solid var(--color-border, #1f1d2b);
+  background: none;
+  transition: border-color 0.5s, color 0.5s;
+  cursor: pointer;
+}
+
+.ctaSecondary:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #f59e0b;
+}
+
+/* ── Stats row ── */
+.statsWrap {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  background: rgba(19, 18, 27, 0.3);
+  border: 1px solid rgba(31, 29, 43, 0.3);
+  border-radius: 2rem;
+  padding: 24px;
+  transition: opacity 1s, transform 1s;
+}
+
+@media (min-width: 640px) {
+  .statsWrap {
+    padding: 40px;
+  }
+}
+
+.statsHidden {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.statsVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+}
+
+.statCard {
+  text-align: center;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(31, 29, 43, 0.2);
+  background: rgba(14, 13, 20, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transition: border-color 0.5s, transform 0.5s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .statCard {
+    padding: 24px;
+  }
+}
+
+.statCard:hover {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.statCard:hover .statValue {
+  transform: scale(1.05);
+}
+
+.statValue {
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-weight: 700;
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.5s;
+}
+
+@media (min-width: 640px) {
+  .statValue {
+    font-size: 36px;
+  }
+}
+
+.colorAccent  { color: #f59e0b; }
+.colorAccent2 { color: #e839f6; }
+.colorAccent3 { color: #22d3ee; }
+.colorAccent4 { color: #f43f5e; }
+
+.statLabel {
+  color: var(--color-text-muted, #5c586e);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 12px;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+}
+
+@media (min-width: 640px) {
+  .statLabel {
+    font-size: 12px;
+  }
+}
+
+/* ── Scroll indicator ── */
+.scrollIndicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: opacity 1s;
+}
+
+.scrollText {
+  color: var(--color-text-muted, #5c586e);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-family: var(--font-heading, "Outfit", sans-serif);
+}
+
+.scrollLine {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, #f59e0b, transparent);
+  animation: scrollDown 2s ease-in-out infinite;
+}
+
+@keyframes scrollDown {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(8px); opacity: 0.3; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ── Visibility helpers ── */
+.hidden { opacity: 0; }
+.visible { opacity: 1; }
+.halfVisible { opacity: 0.5; }
