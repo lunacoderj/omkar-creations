@@ -75,10 +75,10 @@ export default function ReelCard({ reel }) {
           <p className="text-white text-sm font-heading tracking-wide truncate mb-1">
             {reel.title || "Untitled"}
           </p>
-          <div className="flex items-center gap-3">
-            {reel.category && (
-              <span className="text-accent text-[10px] tracking-[0.2em] uppercase font-heading">
-                {reel.category}
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            {(reel.categories?.length > 0 || reel.category) && (
+              <span className="text-accent text-[10px] tracking-[0.2em] uppercase font-heading truncate max-w-[150px]">
+                {reel.categories ? reel.categories.join(", ") : reel.category}
               </span>
             )}
             {reel.downloads > 0 && (
@@ -90,10 +90,10 @@ export default function ReelCard({ reel }) {
         </div>
 
         {/* Category badge */}
-        {reel.category && (
-          <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/10">
+        {(reel.categories?.length > 0 || reel.category) && (
+          <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 max-w-[80%] truncate">
             <span className="text-[10px] tracking-[0.15em] uppercase font-heading text-white/80">
-              {reel.category}
+              {reel.categories ? reel.categories[0] : reel.category}
             </span>
           </div>
         )}

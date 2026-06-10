@@ -1,6 +1,8 @@
 // Normalize data from Firestore/mock into consistent format for components
 
 const CATEGORY_MAP = {
+  trending: "Trending",
+  tollywood: "Tollywood",
   mass_edit: "Mass Edit",
   anime: "Anime",
   vfx: "VFX & Motion",
@@ -9,6 +11,7 @@ const CATEGORY_MAP = {
   project_file: "Project Files",
   sad_edit: "Sad & Emotional",
   love_edit: "Love & Romantic",
+  melody: "Melody",
   song_promo: "Song Promo",
   other: "Other"
 };
@@ -21,6 +24,11 @@ export function normalizeReel(reel) {
     id: reel.id,
     title: reel.title,
     description: reel.description || "",
+    rawCategories: Array.isArray(reel.categories) ? reel.categories : [],
+    categories: Array.isArray(reel.categories) 
+      ? reel.categories.map(cat => CATEGORY_MAP[cat] || cat)
+      : [],
+    rawCategory: reel.category || "",
     category: CATEGORY_MAP[reel.category] || reel.category || "Mass Edit",
     thumbnailUrl: reel.thumbnail_url || reel.thumbnailUrl || "",
     videoUrl: reel.video_url || reel.videoUrl || "",

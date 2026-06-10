@@ -3,10 +3,11 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import styles from "./AdminDashboard.module.css";
-
-
+import AdminSidebar from "@/components/admin/AdminSidebar";
+import ParticlesBackground from "@/components/admin/ParticlesBackground";
+import StatCard from "@/components/admin/StatCard";
+import ActivityFeed from "@/components/admin/ActivityFeed";
+import FileUpload from "@/components/admin/FileUpload";
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -43,6 +44,8 @@ export default function AdminDashboard() {
           title: editingReel.title,
           category: editingReel.category,
           project_file_url: editingReel.project_file_url,
+          project_file_type: editingReel.project_file_type,
+          project_file_name: editingReel.project_file_name,
           is_visible: editingReel.is_visible,
         }),
       });
@@ -110,143 +113,169 @@ export default function AdminDashboard() {
 
   if (status === "loading" || (status === "authenticated" && !dashboardData)) {
     return (
-      <div className={styles.loadingWrapper}>
-        <div className={styles.spinner} />
+      <div className="admin-loader">
+        <div className="admin-loader__spinner" />
+        <p className="text-white/40 text-sm mt-4 font-heading">Loading dashboard…</p>
       </div>
     );
   }
 
   if (!session) return null;
 
-  const navItems = [
-    { id: "overview", label: "Overview", icon: "📊" },
-    { id: "reels", label: "Manage Reels", icon: "🎬" },
-    { id: "analytics", label: "Analytics", icon: "📈" },
-    { id: "settings", label: "Settings", icon: "⚙️" },
-  ];
-
   return (
-    <div className={styles.dashboard}>
-      {/* Top bar */}
-      <header className={styles.topBar}>
-        <div className={styles.topBarInner}>
-          <div className={styles.topBarLeft}>
-            <Link href="/" className={styles.topBarLogo}>
-              <div className={styles.topBarLogoIcon}>
-                <span>O</span>
-              </div>
-              <span className={styles.topBarTitle}>ADMIN</span>
-            </Link>
+    <div className="admin-layout">
+      <ParticlesBackground />
+      <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      
+      <main className="admin-main">
+        {/* Top bar */}
+        <header className="admin-topbar">
+          <div className="flex items-center gap-4">
+            <h1 className="text-lg font-heading font-bold text-white capitalize tracking-wide">
+              {activeTab.replace("-", " ")}
+            </h1>
+            <div className="hidden sm:block h-5 w-px bg-white/10" />
+            <span className="hidden sm:block text-xs text-white/30 font-medium">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+            </span>
           </div>
-          <div className={styles.topBarRight}>
+          <div className="flex items-center gap-4">
             {session.provider === "instagram" && (
-              <span className={styles.igBadge}>📸 Instagram Connected</span>
+              <span className="admin-badge admin-badge--instagram">
+                📸 Instagram Connected
+              </span>
             )}
-            <div className={styles.userInfo}>
-              <div className={styles.userAvatar}>
-                <span>{session.user?.name?.[0] || "A"}</span>
+            <div className="admin-avatar-group">
+              <div className="admin-avatar">
+                <span className="text-amber-500 font-bold text-xs">{session.user?.name?.[0] || "A"}</span>
               </div>
-              <span className={`${styles.userEmail} ${styles.hideMobile}`}>
+              <span className="text-xs text-white/50 hidden sm:block font-medium">
                 {session.user?.email}
               </span>
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/admin/login" })}
-              className={styles.logoutButton}
+              className="admin-btn-ghost text-xs"
             >
               Logout
             </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className={styles.content}>
-        {/* Tab nav */}
-        <div className={styles.tabNav}>
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`${styles.tabButton} ${activeTab === item.id ? styles.tabButtonActive : ""}`}
-            >
-              {item.icon} {item.label}
-            </button>
-          ))}
-        </div>
+        <div className="admin-content">
 
-        {/* Overview Tab */}
+        {/* ═══════════════════════════════════ */}
+        {/* Overview Tab                        */}
+        {/* ═══════════════════════════════════ */}
         {activeTab === "overview" && (
-          <div className={`${styles.spaceY6} ${styles.fadeIn}`}>
-            {/* Stats grid */}
-            <div className={styles.statsGrid}>
-              {[
-                { label: "Total Reels", value: dashboardData.stats.totalReels, colorClass: styles.colorAccent },
-                { label: "Total Views", value: dashboardData.stats.totalViews.toLocaleString(), colorClass: styles.colorCyan },
-                { label: "Downloads", value: dashboardData.stats.totalDownloads.toLocaleString(), colorClass: styles.colorMagenta },
-                { label: "Followers", value: dashboardData.stats.totalFollowers, colorClass: styles.colorRose },
-              ].map((stat) => (
-                <div key={stat.label} className={styles.statCard}>
-                  <p className={styles.statLabel}>{stat.label}</p>
-                  <p className={`${styles.statValue} ${stat.colorClass}`}>{stat.value}</p>
-                </div>
-              ))}
+          <div className="admin-tab-content">
+            {/* Welcome banner */}
+            <div className="admin-welcome">
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-white mb-1">
+                  Welcome back, {session.user?.name?.split(' ')[0] || 'Admin'} 👋
+                </h2>
+                <p className="text-sm text-white/40">Here&apos;s what&apos;s happening with your portfolio today.</p>
+              </div>
             </div>
 
-            {/* Recent activity */}
-            <div className={styles.sectionCard}>
-              <h3 className={styles.sectionTitle}>Recent Activity</h3>
-              <div className={styles.sectionContent}>
-                {dashboardData.interactions.map((item, i) => (
-                  <div key={i} className={styles.activityRow}>
-                    <div className={styles.activityLeft}>
-                      <span className={styles.activityIcon}>
-                        {item.action_type === "download" ? "⬇️" : "👁"}
-                      </span>
-                      <div>
-                        <p className={styles.activityTitle}>{item.post_title}</p>
-                        <p className={styles.activityType}>
-                          {item.action_type === "download" ? "Downloaded" : "Visited"}
-                        </p>
-                      </div>
-                    </div>
-                    <span className={styles.activityTime}>
-                      {new Date(item.timestamp).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
-                    </span>
+            {/* Stats grid */}
+            <div className="admin-stats-grid">
+              <StatCard
+                label="Total Reels"
+                value={dashboardData.stats.totalReels}
+                trend={12}
+                color="#f59e0b"
+                delay={0.1}
+              />
+              <StatCard
+                label="Total Views"
+                value={dashboardData.stats.totalViews}
+                trend={24.5}
+                color="#06b6d4"
+                delay={0.2}
+              />
+              <StatCard
+                label="Downloads"
+                value={dashboardData.stats.totalDownloads}
+                trend={-5.2}
+                color="#d946ef"
+                delay={0.3}
+              />
+              <StatCard
+                label="Followers"
+                value={dashboardData.stats.totalFollowers || 10420}
+                trend={8.4}
+                color="#f43f5e"
+                delay={0.4}
+              />
+            </div>
+
+            {/* Activity + Placeholder */}
+            <div className="admin-grid-2-1">
+              <div className="admin-card admin-card--empty">
+                <div className="flex flex-col items-center justify-center h-full min-h-[250px] gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                    <span className="text-xl">📊</span>
                   </div>
-                ))}
+                  <p className="text-white/30 text-sm font-medium">Analytics charts coming soon</p>
+                  <p className="text-white/20 text-xs">Performance trends & engagement metrics</p>
+                </div>
               </div>
+              <ActivityFeed interactions={dashboardData.interactions} />
             </div>
           </div>
         )}
 
-        {/* Manage Reels Tab */}
+        {/* ═══════════════════════════════════ */}
+        {/* Manage Reels Tab                    */}
+        {/* ═══════════════════════════════════ */}
         {activeTab === "reels" && (
-          <div className={styles.fadeIn}>
-            <div className={styles.reelsHeader}>
-              <h2 className={styles.reelsTitle}>All Reels</h2>
-              <button className={styles.addReelButton} onClick={handleAddReel}>+ Add Reel</button>
+          <div className="admin-tab-content">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-heading font-bold text-white">All Reels</h2>
+                <p className="text-sm text-white/40 mt-1">{dashboardData.reels.length} reels in your portfolio</p>
+              </div>
+              <button className="admin-btn-primary" onClick={handleAddReel}>
+                <span className="text-lg leading-none">+</span>
+                Add Reel
+              </button>
             </div>
-            <div className={styles.tableWrapper}>
-              <table className={styles.table}>
-                <thead className={styles.tableHead}>
+
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
                   <tr>
-                    <th className={styles.tableHeadCell}>Title</th>
-                    <th className={`${styles.tableHeadCell} ${styles.hideMobile}`}>Category</th>
-                    <th className={styles.tableHeadCell}>Views</th>
-                    <th className={styles.tableHeadCell}>Downloads</th>
-                    <th className={styles.tableHeadCell} style={{ textAlign: "right" }}>Actions</th>
+                    <th>Title</th>
+                    <th className="hidden md:table-cell">Category</th>
+                    <th>Views</th>
+                    <th>Downloads</th>
+                    <th className="text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {dashboardData.reels.map((reel, i) => (
-                    <tr key={reel.id || i} className={styles.tableRow}>
-                      <td className={`${styles.tableCell} ${styles.tableCellText}`}>{reel.title}</td>
-                      <td className={`${styles.tableCell} ${styles.tableCellMuted} ${styles.hideMobile}`}>{reel.category}</td>
-                      <td className={`${styles.tableCell} ${styles.tableCellMuted}`}>{reel.view_count || reel.views || 0}</td>
-                      <td className={`${styles.tableCell} ${styles.tableCellAccent}`}>{reel.download_count || reel.downloads || 0}</td>
-                      <td className={styles.tableCellActions}>
-                        <button className={styles.actionEdit} onClick={() => handleEdit(reel)}>Edit</button>
-                        <button className={styles.actionDelete} onClick={() => handleDeleteReel(reel.id)}>Delete</button>
+                    <tr key={reel.id || i}>
+                      <td className="text-white font-medium">{reel.title}</td>
+                      <td className="hidden md:table-cell">
+                        {reel.categories?.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {reel.categories.map((cat, idx) => (
+                              <span key={idx} className="admin-category-tag">{cat}</span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="admin-category-tag">{reel.category || "None"}</span>
+                        )}
+                      </td>
+                      <td className="text-cyan-400 tabular-nums">{(reel.view_count || reel.views || 0).toLocaleString()}</td>
+                      <td className="text-fuchsia-400 tabular-nums">{reel.download_count || reel.downloads || 0}</td>
+                      <td className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <button className="admin-action-btn admin-action-btn--edit" onClick={() => handleEdit(reel)}>Edit</button>
+                          <button className="admin-action-btn admin-action-btn--delete" onClick={() => handleDeleteReel(reel.id)}>Delete</button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -256,49 +285,83 @@ export default function AdminDashboard() {
 
             {/* Edit Modal */}
             {editingReel && (
-              <div className={styles.modalOverlay}>
-                <div className={styles.modalContent}>
-                  <h3 className={styles.modalTitle}>Edit Reel</h3>
-                  <div className={styles.modalForm}>
-                    <div className={styles.formGroup}>
-                      <label>Title</label>
+              <div className="admin-modal-overlay" onClick={(e) => e.target === e.currentTarget && setEditingReel(null)}>
+                <div className="admin-modal admin-modal--wide">
+                  <div className="admin-modal__header">
+                    <h3 className="text-lg font-heading font-bold text-white">Edit Reel</h3>
+                    <button className="admin-modal__close" onClick={() => setEditingReel(null)}>✕</button>
+                  </div>
+                  <div className="admin-modal__body">
+                    <div className="admin-field">
+                      <label className="admin-label">Title</label>
                       <input 
                         type="text" 
                         value={editingReel.title || ""} 
                         onChange={(e) => setEditingReel({...editingReel, title: e.target.value})} 
+                        className="admin-input"
                       />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label>Category</label>
+                    <div className="admin-field">
+                      <label className="admin-label">Categories (comma separated)</label>
                       <input 
                         type="text" 
-                        value={editingReel.category || ""} 
-                        onChange={(e) => setEditingReel({...editingReel, category: e.target.value})} 
+                        value={editingReel.categories ? editingReel.categories.join(", ") : editingReel.category || ""} 
+                        onChange={(e) => setEditingReel({
+                          ...editingReel, 
+                          categories: e.target.value.split(',').map(s => s.trim()).filter(Boolean),
+                          category: e.target.value.split(',')[0]?.trim() || ""
+                        })} 
+                        className="admin-input"
                       />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label>Project File URL</label>
+
+                    {/* File Upload Section */}
+                    <FileUpload
+                      value={editingReel.project_file_url}
+                      fileName={editingReel.project_file_name}
+                      reelId={editingReel.id}
+                      onUploadComplete={({ url, fileName, fileType }) => {
+                        setEditingReel(prev => ({
+                          ...prev,
+                          project_file_url: url,
+                          project_file_type: fileType,
+                          project_file_name: fileName,
+                        }));
+                      }}
+                      onClear={() => {
+                        setEditingReel(prev => ({
+                          ...prev,
+                          project_file_url: "",
+                          project_file_type: "",
+                          project_file_name: "",
+                        }));
+                      }}
+                    />
+
+                    {/* Manual URL fallback */}
+                    <div className="admin-field">
+                      <label className="admin-label">Or paste URL manually</label>
                       <input 
                         type="text" 
                         placeholder="https://link-to-project-file"
                         value={editingReel.project_file_url || ""} 
                         onChange={(e) => setEditingReel({...editingReel, project_file_url: e.target.value})} 
+                        className="admin-input"
                       />
                     </div>
-                    <div className={styles.formGroupCheck}>
-                      <label>
-                        <input 
-                          type="checkbox" 
-                          checked={editingReel.is_visible !== false} 
-                          onChange={(e) => setEditingReel({...editingReel, is_visible: e.target.checked})} 
-                        />
-                        {" Visible to Public"}
-                      </label>
-                    </div>
+
+                    <label className="admin-checkbox">
+                      <input 
+                        type="checkbox" 
+                        checked={editingReel.is_visible !== false} 
+                        onChange={(e) => setEditingReel({...editingReel, is_visible: e.target.checked})} 
+                      />
+                      <span>Visible to Public</span>
+                    </label>
                   </div>
-                  <div className={styles.modalActions}>
-                    <button className={styles.modalCancel} onClick={() => setEditingReel(null)}>Cancel</button>
-                    <button className={styles.modalSave} onClick={handleSaveReel} disabled={isSaving}>
+                  <div className="admin-modal__footer">
+                    <button className="admin-btn-ghost" onClick={() => setEditingReel(null)}>Cancel</button>
+                    <button className="admin-btn-primary" onClick={handleSaveReel} disabled={isSaving}>
                       {isSaving ? "Saving..." : "Save Changes"}
                     </button>
                   </div>
@@ -308,59 +371,94 @@ export default function AdminDashboard() {
 
             {/* Add Modal */}
             {isAddingReel && (
-              <div className={styles.modalOverlay}>
-                <div className={styles.modalContent}>
-                  <h3 className={styles.modalTitle}>Add New Reel</h3>
-                  <div className={styles.modalForm}>
-                    <div className={styles.formGroup}>
-                      <label>Title</label>
+              <div className="admin-modal-overlay" onClick={(e) => e.target === e.currentTarget && setIsAddingReel(false)}>
+                <div className="admin-modal admin-modal--wide">
+                  <div className="admin-modal__header">
+                    <h3 className="text-lg font-heading font-bold text-white">Add New Reel</h3>
+                    <button className="admin-modal__close" onClick={() => setIsAddingReel(false)}>✕</button>
+                  </div>
+                  <div className="admin-modal__body">
+                    <div className="admin-field">
+                      <label className="admin-label">Title</label>
                       <input 
                         type="text" 
                         value={newReel.title || ""} 
                         onChange={(e) => setNewReel({...newReel, title: e.target.value})} 
+                        className="admin-input"
+                        placeholder="Enter reel title"
                       />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label>Category</label>
+                    <div className="admin-field">
+                      <label className="admin-label">Categories (comma separated)</label>
                       <input 
                         type="text" 
-                        value={newReel.category || ""} 
-                        onChange={(e) => setNewReel({...newReel, category: e.target.value})} 
+                        value={newReel.categories ? newReel.categories.join(", ") : newReel.category || ""} 
+                        onChange={(e) => setNewReel({
+                          ...newReel, 
+                          categories: e.target.value.split(',').map(s => s.trim()).filter(Boolean),
+                          category: e.target.value.split(',')[0]?.trim() || ""
+                        })} 
+                        className="admin-input"
+                        placeholder="e.g. mass_edit, anime, cinema"
                       />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label>Project File URL</label>
+
+                    {/* File Upload Section */}
+                    <FileUpload
+                      value={newReel.project_file_url}
+                      fileName={newReel.project_file_name}
+                      onUploadComplete={({ url, fileName, fileType }) => {
+                        setNewReel(prev => ({
+                          ...prev,
+                          project_file_url: url,
+                          project_file_type: fileType,
+                          project_file_name: fileName,
+                        }));
+                      }}
+                      onClear={() => {
+                        setNewReel(prev => ({
+                          ...prev,
+                          project_file_url: "",
+                          project_file_type: "",
+                          project_file_name: "",
+                        }));
+                      }}
+                    />
+
+                    {/* Manual URL fallback */}
+                    <div className="admin-field">
+                      <label className="admin-label">Or paste URL manually</label>
                       <input 
                         type="text" 
                         placeholder="https://link-to-project-file"
                         value={newReel.project_file_url || ""} 
                         onChange={(e) => setNewReel({...newReel, project_file_url: e.target.value})} 
+                        className="admin-input"
                       />
                     </div>
-                    <div className={styles.formGroupCheck}>
-                      <label>
+
+                    <div className="admin-upload__checkboxes">
+                      <label className="admin-checkbox">
                         <input 
                           type="checkbox" 
                           checked={newReel.is_visible !== false} 
                           onChange={(e) => setNewReel({...newReel, is_visible: e.target.checked})} 
                         />
-                        {" Visible to Public"}
+                        <span>Visible to Public</span>
                       </label>
-                    </div>
-                    <div className={styles.formGroupCheck}>
-                      <label>
+                      <label className="admin-checkbox">
                         <input 
                           type="checkbox" 
                           checked={newReel.is_featured === true} 
                           onChange={(e) => setNewReel({...newReel, is_featured: e.target.checked})} 
                         />
-                        {" Featured Reel"}
+                        <span>Featured Reel</span>
                       </label>
                     </div>
                   </div>
-                  <div className={styles.modalActions}>
-                    <button className={styles.modalCancel} onClick={() => setIsAddingReel(false)}>Cancel</button>
-                    <button className={styles.modalSave} onClick={handleSaveNewReel} disabled={isSaving}>
+                  <div className="admin-modal__footer">
+                    <button className="admin-btn-ghost" onClick={() => setIsAddingReel(false)}>Cancel</button>
+                    <button className="admin-btn-primary" onClick={handleSaveNewReel} disabled={isSaving}>
                       {isSaving ? "Adding..." : "Add Reel"}
                     </button>
                   </div>
@@ -370,87 +468,107 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Analytics Tab */}
+        {/* ═══════════════════════════════════ */}
+        {/* Analytics Tab                       */}
+        {/* ═══════════════════════════════════ */}
         {activeTab === "analytics" && (
-          <div className={`${styles.fadeIn} ${styles.spaceY6}`}>
-            <div className={styles.analyticsGrid}>
-              <div className={styles.sectionCard}>
-                <h3 className={styles.sectionTitle}>Top Performing Reels</h3>
-                <div className={styles.sectionContent}>
+          <div className="admin-tab-content">
+            <div className="mb-2">
+              <h2 className="text-xl font-heading font-bold text-white">Analytics</h2>
+              <p className="text-sm text-white/40 mt-1">Performance insights for your content</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Top Performing */}
+              <div className="admin-card">
+                <h3 className="text-base font-heading font-bold text-white mb-5 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-cyan-500" />
+                  Top Performing Reels
+                </h3>
+                <div className="space-y-4">
                   {[...dashboardData.reels]
                     .sort((a, b) => (b.view_count || b.views || 0) - (a.view_count || a.views || 0))
-                    .slice(0, 3)
-                    .map((r, _, arr) => {
+                    .slice(0, 5)
+                    .map((r, idx, arr) => {
                       const maxViews = arr[0].view_count || arr[0].views || 1;
                       const views = r.view_count || r.views || 0;
                       return (
-                    <div key={r.id || r.title}>
-                      <div className={styles.barLabel}>
-                        <span className={styles.barLabelTitle}>{r.title}</span>
-                        <span className={styles.colorCyan}>{views.toLocaleString()}</span>
+                    <div key={r.id || r.title} className="group">
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-white/80 font-medium text-xs">{r.title}</span>
+                        <span className="text-cyan-400 text-xs tabular-nums font-semibold">{views.toLocaleString()}</span>
                       </div>
-                      <div className={styles.barTrack}>
+                      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <div
-                          className={`${styles.barFill} ${styles.barFillViews}`}
+                          className="h-full bg-gradient-to-r from-cyan-500/60 to-cyan-400/40 rounded-full transition-all duration-700"
                           style={{ width: `${(views / maxViews) * 100}%` }}
                         />
                       </div>
                     </div>
-                  )})}
+                  );})}
                 </div>
               </div>
-              <div className={styles.sectionCard}>
-                <h3 className={styles.sectionTitle}>Most Downloaded</h3>
-                <div className={styles.sectionContent}>
+
+              {/* Most Downloaded */}
+              <div className="admin-card">
+                <h3 className="text-base font-heading font-bold text-white mb-5 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-fuchsia-500" />
+                  Most Downloaded
+                </h3>
+                <div className="space-y-4">
                   {[...dashboardData.reels]
                     .sort((a, b) => (b.download_count || b.downloads || 0) - (a.download_count || a.downloads || 0))
-                    .slice(0, 3)
-                    .map((r, _, arr) => {
+                    .slice(0, 5)
+                    .map((r, idx, arr) => {
                       const maxDl = arr[0].download_count || arr[0].downloads || 1;
                       const dl = r.download_count || r.downloads || 0;
                       return (
-                    <div key={r.id || r.title}>
-                      <div className={styles.barLabel}>
-                        <span className={styles.barLabelTitle}>{r.title}</span>
-                        <span className={styles.colorMagenta}>{dl}</span>
+                    <div key={r.id || r.title} className="group">
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-white/80 font-medium text-xs">{r.title}</span>
+                        <span className="text-fuchsia-400 text-xs tabular-nums font-semibold">{dl}</span>
                       </div>
-                      <div className={styles.barTrack}>
+                      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <div
-                          className={`${styles.barFill} ${styles.barFillDownloads}`}
+                          className="h-full bg-gradient-to-r from-fuchsia-500/60 to-fuchsia-400/40 rounded-full transition-all duration-700"
                           style={{ width: `${(dl / maxDl) * 100}%` }}
                         />
                       </div>
                     </div>
-                  )})}
+                  );})}
                 </div>
               </div>
             </div>
 
-            <div className={styles.sectionCard} style={{ marginTop: "2rem" }}>
-              <h3 className={styles.sectionTitle}>Detailed Reel Analytics</h3>
-              <div className={styles.tableWrapper}>
-                <table className={styles.table}>
-                  <thead className={styles.tableHead}>
+            {/* Detailed table */}
+            <div className="admin-card mt-6">
+              <h3 className="text-base font-heading font-bold text-white mb-5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                Detailed Analytics
+              </h3>
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
                     <tr>
-                      <th className={styles.tableHeadCell}>Reel Title</th>
-                      <th className={styles.tableHeadCell}>Views</th>
-                      <th className={styles.tableHeadCell}>Likes</th>
-                      <th className={styles.tableHeadCell}>Comments</th>
-                      <th className={styles.tableHeadCell}>Shares</th>
-                      <th className={styles.tableHeadCell}>Downloads</th>
+                      <th>Reel Title</th>
+                      <th>Views</th>
+                      <th className="hidden sm:table-cell">Likes</th>
+                      <th className="hidden sm:table-cell">Comments</th>
+                      <th className="hidden md:table-cell">Shares</th>
+                      <th className="text-right">Downloads</th>
                     </tr>
                   </thead>
                   <tbody>
                     {[...dashboardData.reels]
                       .sort((a, b) => (b.view_count || b.views || 0) - (a.view_count || a.views || 0))
                       .map((r, i) => (
-                      <tr key={r.id || i} className={styles.tableRow}>
-                        <td className={`${styles.tableCell} ${styles.tableCellText}`}>{r.title}</td>
-                        <td className={`${styles.tableCell} ${styles.colorCyan}`}>{(r.view_count || r.views || 0).toLocaleString()}</td>
-                        <td className={`${styles.tableCell}`}>{r.likes_count || r.likes || 0}</td>
-                        <td className={`${styles.tableCell}`}>{r.comments_count || r.comments || 0}</td>
-                        <td className={`${styles.tableCell}`}>{r.shares_count || r.shares || 0}</td>
-                        <td className={`${styles.tableCell} ${styles.colorMagenta}`}>{r.download_count || r.downloads || 0}</td>
+                      <tr key={r.id || i}>
+                        <td className="text-white font-medium">{r.title}</td>
+                        <td className="text-cyan-400 tabular-nums">{(r.view_count || r.views || 0).toLocaleString()}</td>
+                        <td className="text-white/60 tabular-nums hidden sm:table-cell">{r.likes_count || r.likes || 0}</td>
+                        <td className="text-white/60 tabular-nums hidden sm:table-cell">{r.comments_count || r.comments || 0}</td>
+                        <td className="text-white/60 tabular-nums hidden md:table-cell">{r.shares_count || r.shares || 0}</td>
+                        <td className="text-fuchsia-400 tabular-nums text-right">{r.download_count || r.downloads || 0}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -460,31 +578,45 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Settings Tab */}
+        {/* ═══════════════════════════════════ */}
+        {/* Settings Tab                        */}
+        {/* ═══════════════════════════════════ */}
         {activeTab === "settings" && (
-          <div className={`${styles.fadeIn} ${styles.settingsContainer}`}>
-            <div className={styles.sectionCard}>
-              <h3 className={styles.sectionTitle}>Account</h3>
-              <div className={styles.settingsContent}>
-                <div className={styles.settingField}>
-                  <label>Email</label>
-                  <p>{session.user?.email}</p>
+          <div className="admin-tab-content max-w-2xl">
+            <div className="mb-2">
+              <h2 className="text-xl font-heading font-bold text-white">Settings</h2>
+              <p className="text-sm text-white/40 mt-1">Manage your account and preferences</p>
+            </div>
+
+            <div className="admin-card">
+              <h3 className="text-base font-heading font-bold text-white mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                Account Details
+              </h3>
+              <div className="space-y-6">
+                <div className="admin-field">
+                  <label className="admin-label">Email</label>
+                  <p className="text-white text-sm">{session.user?.email}</p>
                 </div>
-                <div className={styles.settingField}>
-                  <label>Login Method</label>
-                  <p>{session.provider === "instagram" ? "Instagram" : "Email/Password"}</p>
+                <div className="admin-field">
+                  <label className="admin-label">Login Method</label>
+                  <p className="text-white text-sm">{session.provider === "instagram" ? "Instagram" : "Email/Password"}</p>
                 </div>
                 {session.provider === "instagram" && (
-                  <div className={styles.settingsDivider}>
-                    <label>Instagram Connection</label>
-                    <p>✓ Connected — Instagram data syncing enabled</p>
+                  <div className="pt-4 border-t border-white/5">
+                    <label className="admin-label">Instagram Connection</label>
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <p className="text-emerald-400 text-sm">Connected — Instagram data syncing enabled</p>
+                    </div>
                   </div>
                 )}
               </div>
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

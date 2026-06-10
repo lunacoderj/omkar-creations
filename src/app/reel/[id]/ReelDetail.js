@@ -153,8 +153,16 @@ export default function ReelDetail() {
           {/* Info */}
           <div className={styles.infoCol}>
             <ScrollReveal delay={100}>
-              {reel.category && (
-                <span className={styles.category}>{reel.category}</span>
+              {(reel.categories?.length > 0 || reel.category) && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {reel.categories ? (
+                    reel.categories.map((cat, i) => (
+                      <span key={i} className={styles.category}>{cat}</span>
+                    ))
+                  ) : (
+                    <span className={styles.category}>{reel.category}</span>
+                  )}
+                </div>
               )}
               <h1 className={styles.reelTitle}>
                 {reel.title || "Untitled Reel"}

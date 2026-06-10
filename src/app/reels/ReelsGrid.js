@@ -8,15 +8,16 @@ import styles from "./ReelsGrid.module.css";
 
 const CATEGORIES = [
   { id: "all", label: "All" },
+  { id: "trending", label: "Trending" },
+  { id: "tollywood", label: "Tollywood" },
   { id: "mass_edit", label: "Mass Edit" },
+  { id: "sad_edit", label: "Sad & Emotional" },
+  { id: "love_edit", label: "Love & Romantic" },
+  { id: "melody", label: "Melody" },
   { id: "anime", label: "Anime" },
   { id: "vfx", label: "VFX & Motion" },
   { id: "devotional", label: "Devotional" },
-  { id: "cinema", label: "Cinema" },
   { id: "project_file", label: "Project Files" },
-  { id: "sad_edit", label: "Sad & Emotional" },
-  { id: "love_edit", label: "Love & Romantic" },
-  { id: "song_promo", label: "Song Promo" },
   { id: "other", label: "Other" }
 ];
 
@@ -42,7 +43,7 @@ export default function ReelsGrid() {
 
   const filtered = active === "all"
     ? reels
-    : reels.filter((r) => r.category === active);
+    : reels.filter((r) => r.rawCategories?.includes(active) || r.rawCategory === active);
 
   return (
     <div className={styles.wrapper}>

@@ -38,28 +38,38 @@ const BATCH_SIZE = 450; // Stay under Firestore's 500-write batch limit
 
 // ─── Category Detection ─────────────────────────────────
 // Maps keywords in captions/hashtags to portfolio categories
+// Maps keywords in captions/hashtags to portfolio categories
 const CATEGORY_RULES = [
-  { keywords: ["mass", "mass edit", "massedit", "beast", "god mode", "ogmode", "masstelugusongs", "massbgm", "elevation", "attitude", "kalki", "kgf"], category: "mass_edit" },
+  { keywords: ["trending", "trendingreels", "viral", "viralreels", "explore", "explorepage", "reelitfeelit", "fyp", "instagram", "instagood", "instadaily"], category: "trending" },
+  { keywords: ["telugusongs", "telugureels", "tollywood", "telugumusic", "telugulyrics", "prabhas", "ntr", "ramcharan", "alluarjun"], category: "tollywood" },
+  { keywords: ["lovefailure", "lovehurts", "lovefailed", "heartbreakstory", "heartbrokenstatus", "heartbreak", "sad", "pain", "broken"], category: "sad_edit" },
+  { keywords: ["love", "telugulovesongs", "romantictelugusongs", "lovesongs", "romantic", "couple", "feelgoodsongs", "lalithaedits"], category: "love_edit" },
+  { keywords: ["melody", "telugumelody", "melodysongs", "audio", "bgm", "music"], category: "melody" },
+  { keywords: ["mass", "mass edit", "massedit", "beast", "god mode", "ogmode", "masstelugusongs", "massbgm", "elevation", "attitude", "kalki", "kgf", "salaar"], category: "mass_edit" },
   { keywords: ["anime", "amv", "manga", "mirai", "naruto", "one piece", "jujutsu", "otaku", "gojo", "sukuna"], category: "anime" },
   { keywords: ["vfx", "aftereffects", "motion poster", "motionposter", "poster", "motion", "cgi", "blender", "edit"], category: "vfx" },
   { keywords: ["devotional", "god", "hanuman", "shiva", "krishna", "temple", "parvati", "shivaji", "shiv", "ram", "bhakti", "hindu"], category: "devotional" },
-  { keywords: ["cinema", "cinematic", "movie", "film", "bahubali", "rrr", "pushpa", "tollywood", "salaar", "prabhas", "telugucinema", "ntr", "ramcharan", "alluarjun"], category: "cinema" },
   { keywords: ["tutorial", "howto", "how to", "learn", "tips", "breakdown", "project file", "projectfile", "giveaway", "preset"], category: "project_file" },
-  { keywords: ["love failure", "broken heart", "brokenheart", "lovefailure", "sadtelugusongs", "heartbreakstory", "broken", "emotional", "lovehurts", "lovefailed", "sad", "pain", "heartbreak"], category: "sad_edit" },
-  { keywords: ["love", "romantictelugusongs", "lovesongs", "romantic", "couple", "feelgoodsongs", "lalithaedits", "wedding", "prewedding"], category: "love_edit" },
-  { keywords: ["song", "promo", "lyrical", "music", "melody", "lyrics", "telugusongs", "teluguhits", "teluguplaylist", "telugubeats", "telugualbum", "retrotelugusongs", "audio", "bgm", "trendingaudio"], category: "song_promo" },
 ];
 
-function detectCategory(caption, hashtags) {
+function detectCategories(caption, hashtags) {
   // Apify hashtags include '#' prefix — strip them for matching
   const cleanTags = (hashtags || []).map((h) => h.replace(/^#/, ""));
   const text = `${caption} ${cleanTags.join(" ")}`.toLowerCase();
+  
+  const matchedCategories = new Set();
+  
   for (const rule of CATEGORY_RULES) {
     if (rule.keywords.some((kw) => text.includes(kw))) {
-      return rule.category;
+      matchedCategories.add(rule.category);
     }
   }
-  return "other";
+  
+  if (matchedCategories.size === 0) {
+    return ["other"];
+  }
+  
+  return Array.from(matchedCategories);
 }
 
 // ─── Title Extraction ────────────────────────────────────
@@ -119,7 +129,7 @@ function transformReel(apifyItem, index) {
   
   return {
     title: extractTitle(caption),
-    category: detectCategory(caption, rawHashtags),
+    categories: detectCategories(caption, rawHashtags),
     description: extractDescription(caption),
     instagram_url: apifyItem.post_url || apifyItem.url || `https://www.instagram.com/reel/${shortCode}/`,
     instagram_shortcode: shortCode,
@@ -240,20 +250,25 @@ async function main() {
   // ─── Category breakdown ────────────────────────────────
   const categoryCounts = {};
   transformedReels.forEach((r) => {
-    categoryCounts[r.category] = (categoryCounts[r.category] || 0) + 1;
+    if (r.categories && Array.isArray(r.categories)) {
+      r.categories.forEach(cat => {
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+      });
+    }
   });
   
   console.log("\n📊 Category breakdown:");
   Object.entries(categoryCounts)
     .sort(([, a], [, b]) => b - a)
     .forEach(([cat, count]) => {
-      console.log(`   ${cat.padEnd(20)} ${count} reels`);
+      console.log(`   ${cat.padEnd(20)} ${count} tags`);
     });
 
   // ─── Preview first 5 ──────────────────────────────────
   console.log("\n🔍 Preview (first 5 reels):");
   transformedReels.slice(0, 5).forEach((reel, i) => {
-    console.log(`   ${i + 1}. "${reel.title}" [${reel.category}] — ${reel.view_count} views`);
+    const cats = reel.categories ? reel.categories.join(", ") : "none";
+    console.log(`   ${i + 1}. "${reel.title}" [${cats}] — ${reel.view_count} views`);
   });
   if (transformedReels.length > 5) {
     console.log(`   ... and ${transformedReels.length - 5} more`);

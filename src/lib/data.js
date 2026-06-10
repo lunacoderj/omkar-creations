@@ -5,7 +5,7 @@ const MOCK_REELS = [
   {
     id: "1",
     title: "QALB — Mass Edit",
-    category: "mass_edit",
+    categories: ["mass_edit"],
     description: "High-energy mass edit with stunning VFX transitions and color grading.",
     instagram_url: "https://www.instagram.com/reel/example1/",
     thumbnail_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=500&fit=crop",
@@ -20,7 +20,7 @@ const MOCK_REELS = [
   {
     id: "2",
     title: "DC Motion Poster",
-    category: "motion_poster",
+    categories: ["motion_poster"],
     description: "Cinematic DC-style motion poster with dynamic particle effects.",
     instagram_url: "https://www.instagram.com/reel/example2/",
     thumbnail_url: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=400&h=500&fit=crop",
@@ -35,7 +35,7 @@ const MOCK_REELS = [
   {
     id: "3",
     title: "GOD MODE — NTR",
-    category: "mass_edit",
+    categories: ["mass_edit"],
     description: "Epic NTR mass edit with heavy bass sync and fire transitions.",
     instagram_url: "https://www.instagram.com/reel/example3/",
     thumbnail_url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=500&fit=crop",
@@ -50,7 +50,7 @@ const MOCK_REELS = [
   {
     id: "4",
     title: "HANUMAN — Cinematic Edit",
-    category: "devotional",
+    categories: ["devotional"],
     description: "Devotional cinematic edit of Lord Hanuman with epic music sync.",
     instagram_url: "https://www.instagram.com/reel/example4/",
     thumbnail_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=500&fit=crop",
@@ -65,7 +65,7 @@ const MOCK_REELS = [
   {
     id: "5",
     title: "Ni Dhyaanam — Song Promo",
-    category: "song_promo",
+    categories: ["song_promo"],
     description: "Music promotion with smooth transitions and aesthetic visuals.",
     instagram_url: "https://www.instagram.com/reel/example5/",
     thumbnail_url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=500&fit=crop",
@@ -80,7 +80,7 @@ const MOCK_REELS = [
   {
     id: "6",
     title: "MIRAI — Anime Edit",
-    category: "anime",
+    categories: ["anime"],
     description: "Clean anime-style edit with cinematic color grading and smooth transitions.",
     instagram_url: "https://www.instagram.com/reel/example6/",
     thumbnail_url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=500&fit=crop",
@@ -95,7 +95,7 @@ const MOCK_REELS = [
   {
     id: "7",
     title: "Karuppu Title Card",
-    category: "cinema",
+    categories: ["cinema"],
     description: "Title card recreation with heavy mass effects and typography.",
     instagram_url: "https://www.instagram.com/reel/example7/",
     thumbnail_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=500&fit=crop",
@@ -110,7 +110,7 @@ const MOCK_REELS = [
   {
     id: "8",
     title: "BIN — Visual Effects",
-    category: "mass_edit",
+    categories: ["mass_edit"],
     description: "Quick-cut visual effects with beat sync and neon color palette.",
     instagram_url: "https://www.instagram.com/reel/example8/",
     thumbnail_url: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=500&fit=crop",
@@ -125,7 +125,7 @@ const MOCK_REELS = [
   {
     id: "9",
     title: "SPIRIT — Prabhas Edit",
-    category: "mass_edit",
+    categories: ["mass_edit"],
     description: "Prabhas mass tribute edit with dramatic slow-motion and bass effects.",
     instagram_url: "https://www.instagram.com/reel/example9/",
     thumbnail_url: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400&h=500&fit=crop",
@@ -140,7 +140,7 @@ const MOCK_REELS = [
   {
     id: "10",
     title: "OG SALAAR — Mass Edit",
-    category: "mass_edit",
+    categories: ["mass_edit"],
     description: "Salaar-themed cinematic mass edit with fire and smoke overlays.",
     instagram_url: "https://www.instagram.com/reel/example10/",
     thumbnail_url: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?w=400&h=500&fit=crop",
@@ -155,7 +155,7 @@ const MOCK_REELS = [
   {
     id: "11",
     title: "LORD HANUMAN — Art Edit",
-    category: "devotional",
+    categories: ["devotional"],
     description: "Artistic devotional edit of Lord Hanuman with golden tones and particles.",
     instagram_url: "https://www.instagram.com/reel/example11/",
     thumbnail_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop",
@@ -170,7 +170,7 @@ const MOCK_REELS = [
   {
     id: "12",
     title: "Vaana Chinukulu ft Bahubali",
-    category: "cinema",
+    categories: ["cinema"],
     description: "Bahubali-themed cinematic edit with rain effects and emotional music.",
     instagram_url: "https://www.instagram.com/reel/example12/",
     thumbnail_url: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=500&fit=crop",
